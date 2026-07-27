@@ -13,6 +13,7 @@ using namespace ROOT::VecOps;
 
 
 RVecF dbnn_clf(
+    float event,
     float detajj,
     float dphill,
     float drll,
@@ -55,6 +56,13 @@ RVecF dbnn_clf(
     inputs[16] = eta2;
     inputs[17] = pt1;
     inputs[18] = pt2;
+
+    std::cout << "[Event " << event << "] Inputs: ";
+    for (int i = 0; i < 19; ++i) {
+        std::cout << inputs[i] << (i < 18 ? ", " : "");
+    }
+    std::cout << std::endl;
+    std::cout << "\n  Output (vbfnode): " << guess_SigDBNN(inputs, 0) << "\n" << std::endl;
 
     dbnn.push_back(guess_SigDBNN(inputs, 0));
     dbnn.push_back(guess_SigDBNN(inputs, 1));

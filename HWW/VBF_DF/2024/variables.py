@@ -15,8 +15,9 @@ variables = {}
 # SNN
 variables['classvbf_SNN'] = { 
     'name': 'vbf_clf[0]',
-    'range' : ([0.25, 0.517, 0.599, 0.67, 0.74, 0.795, 0.865, 0.908, 1.],),
+    #'range' : ([0.25, 0.517, 0.599, 0.67, 0.74, 0.795, 0.865, 0.908, 1.],),
     #'range' : ([0,0.545,0.635,0.695,0.745,0.785,1.],),
+    'range' : (100, 0., 1.),
     'xaxis' : 'SNN discriminant vbf',
     'fold'  : 3,
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
@@ -56,7 +57,7 @@ variables['events'] = {
     'fold'  : 3,
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
-
+"""
 
 variables['mjj']  = {
     'name': 'mjj',
@@ -245,3 +246,4 @@ variables['mlj22'] = {
      'fold'  : 3,
      'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
+"""

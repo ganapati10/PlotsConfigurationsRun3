@@ -2,7 +2,7 @@ import sys,os
 
 #: tag used to identify the configuration folder version
 #tag = "VBF_DF_2022_for_combination"   
-tag = "VBF_DF_2022_for_combination_1107" # quick silly test with super big network   
+tag = "VBF_DF_2022_for_combination_2307" # quick silly test with super big network   
 
 #: file to use as runner script, default uses mkShapesRDF.shapeAnalysis.runner, otherwise specify path to script
 runnerFile = "default"

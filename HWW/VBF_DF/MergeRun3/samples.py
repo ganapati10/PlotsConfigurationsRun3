@@ -27,14 +27,31 @@ samples['VVV'] = {
 samples['ggH_hww'] = {
 }
 
+
 samples['qqH_hww'] = {
 }
 
-samples['DATA'] = {
-} 
 
-samples['Fake'] = {
+samples['ZH_hww'] = {
 }
+
+samples['ggZH_hww'] = {
+}
+
+samples['WH_hww'] = {
+}
+
+samples['ttH_hww'] = {
+}
+
+samples['ggH_htt'] = {
+}
+
+samples['qqH_htt'] = {
+}
+
+samples['DATA'] = { 
+} 
 
 samples['Fake'] = {
 }
