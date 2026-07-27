@@ -158,7 +158,7 @@ class MergerFactory:
                 'os': os,
                 'sys': sys,
                 'cuts': globals().get('cuts', {}),
-                'categories': globals().get('categories', {}),
+                'categories': globals().get('categories', {}), # <-- Add this line!
                 'nuisances': {},
                 'aliases': {}
             }
@@ -252,23 +252,51 @@ class MergerFactory:
                     histo_down_to_be_summed_weights = 1.0
 
             else:
-                ### To keep the (un)correlation of nuisances, one need to define new nuisances. For example:
-                # lumi_Uncorrelated exists in all the nuisances.py, but it needs to be uncorrelated across years
-                # therefore, in the global nuisances.py is defined a new nuisance, e.g. lumi_Uncorrelated_2018, lumi_Uncorrelated_2017, etc.
+                ### To keep the (un)correlation of nuisances, one need to define new nuisances.
                 matched = False
                 for year in self.all_years :
-                    if year in nuisanceName and year in folderHR :
-                        oldNuisanceName = nuisanceName.split("_"+year)[0]
-                        if oldNuisanceName in self.all_nuisances[folderHR].keys() :
+                    
+                    if year in nuisanceName and (year == folderHR or folderHR.endswith(year)):
+                        
+                        if "lumi" in nuisanceName and 'samples' in nuisance and sampleName in nuisance['samples']:
+                            raw_val = nuisance['samples'][sampleName]
                             matched = True
-                            histo_up_to_be_summed, histo_down_to_be_summed, histo_up_to_be_summed_weights, histo_down_to_be_summed_weights, nameTempUp, nameTempDown = self.getVariedHistos(folderHR, folder_name, rootFileIn, sampleName, oldNuisanceName, nuisance, yearKeys, extra="CMS_")
+                            
+                            histo_up_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp)
+                            histo_down_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp)
+                            
+                            nameTempUp = nameTemp + "_" + nuisanceName + "Up"
+                            nameTempDown = nameTemp + "_" + nuisanceName + "Down"
+                            
+                            if isinstance(raw_val, (list, tuple)):
+                                histo_up_to_be_summed_weights = float(raw_val[0])
+                                histo_down_to_be_summed_weights = float(raw_val[1]) if len(raw_val) > 1 else 1.0 / float(raw_val[0])
+                            elif isinstance(raw_val, str):
+                                if "/" in raw_val:
+                                    v_up, v_down = raw_val.split("/")
+                                    histo_up_to_be_summed_weights = float(v_up)
+                                    histo_down_to_be_summed_weights = float(v_down)
+                                else:
+                                    histo_up_to_be_summed_weights = float(raw_val)
+                                    histo_down_to_be_summed_weights = 1.0 / float(raw_val)
+                            else:
+                                histo_up_to_be_summed_weights = float(raw_val)
+                                histo_down_to_be_summed_weights = 1.0 / float(raw_val)
+                            
+                            break 
+
+                        targetNuisanceName = nuisanceName if nuisanceName in self.all_nuisances[folderHR].keys() else nuisanceName.split("_"+year)[0]
+
+                        if targetNuisanceName in self.all_nuisances[folderHR].keys() :
+                            matched = True
+                            histo_up_to_be_summed, histo_down_to_be_summed, histo_up_to_be_summed_weights, histo_down_to_be_summed_weights, nameTempUp, nameTempDown = self.getVariedHistos(folderHR, folder_name, rootFileIn, sampleName, targetNuisanceName, nuisance, yearKeys, extra="CMS_")
+                            
 
                 if not matched :
-                    # print(f"Taking nominal value for {nuisanceName} in {folderHR}!")
-                    histo_up_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp )
-                    histo_down_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp )
+                    histo_up_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp)
+                    histo_down_to_be_summed = rootFileIn.Get(folder_name + "/" + nameTemp)
                     histo_up_to_be_summed_weights = 1.0
-                    histo_down_to_be_summed_weights = 1.0
+                    histo_down_to_be_summed_weights = 1.0                    
 
         if usedExtra :
             return histo_up_to_be_summed, histo_down_to_be_summed, histo_up_to_be_summed_weights, histo_down_to_be_summed_weights, nameExtraTempUp, nameExtraTempDown

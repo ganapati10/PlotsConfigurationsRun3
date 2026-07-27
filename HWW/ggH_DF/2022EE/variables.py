@@ -21,6 +21,15 @@ variables['events'] = {
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
 
+variables['ggf_clf'] = {
+    'name' : 'ggf_clf[0]',
+    'range' : (100,0,1),
+    'xaxis' : 'ggF classifier score',
+    'fold'  : 3,
+    'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
+}
+
+
 variables['mllVSmth01leq20'] = {
     'name'  : 'mll:mth',
     'range' : ([12, 25, 40, 50, 70, 90, 210],[60, 80, 90, 110, 130, 150, 200],),
@@ -44,7 +53,7 @@ variables['mllVSmth2'] = {
     'fold'  : 3,
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
-
+"""
 variables['nvtx'] = {     
     'name'  : 'PV_npvsGood',      
     'range' : (100, 0, 100),  
@@ -191,6 +200,7 @@ variables['jeteta2_fine_binning']  = {
     'fold' : 0,
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
+
 variables['mth']  = {  
     'name': 'mth',     
     'range' : (20, 0, 200),   
@@ -198,3 +208,12 @@ variables['mth']  = {
     'fold' : 0,
     'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
 }
+
+variables['mth_high_mass']  = {  
+    'name': 'mth',     
+    'range' : (20, 200, 400),   
+    'xaxis' : 'm_{T}^{H} [GeV]',
+    'fold' : 0,
+    'blind'   :  dict([(cut, 'full') for cut in cuts2j if 'hww_sr' in cut])
+}
+"""

@@ -1,7 +1,7 @@
 import sys,os
 
 #: tag used to identify the configuration folder version
-tag = "ggF_DF_Run3_1107"  
+tag = "ggF_DF_Run3_2307"  
 
 #: file to use as runner script, default uses mkShapesRDF.shapeAnalysis.runner, otherwise specify path to script
 runnerFile = "default"
