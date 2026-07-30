@@ -249,7 +249,7 @@ aliases['wwcr'] = {
 
 # SR definition
 aliases['sr'] = {
-    'expr': 'mth > 60 && mth < 125 && mtw2 > 30 && bVeto'
+    'expr': 'mth > 60 && mtw2 > 30 && bVeto'
 }
 
 # data/MC scale factors
