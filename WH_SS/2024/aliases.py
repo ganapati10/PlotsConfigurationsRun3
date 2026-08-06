@@ -15,10 +15,13 @@ mc     = [skey for skey in samples if skey not in ('Fake', 'DATA', 'Dyemb', 'DAT
 
 # LepCut3l__ele_wp90iso__mu_cut_TightID_POG
 
-eleWP = 'cutBased_LooseID_tthMVA_Run3'
-# eleWP = 'wp90iso'
-muWP  = 'cut_TightID_pfIsoTight_HWW_tthmva_67'
-# muWP  = 'cut_TightID_POG'
+# eleWP = 'cutBased_LooseID_tthMVA_Run3'
+# # eleWP = 'wp90iso'
+# muWP  = 'cut_TightID_pfIsoTight_HWW_tthmva_67'
+# # muWP  = 'cut_TightID_POG'
+
+eleWP = 'cutBased_MediumID_tthMVA_HWW'
+muWP  = 'cut_TightID_pfIsoLoose_HWW_tthmva_HWW'
 
 aliases['LepWPCut'] = {
     'expr': 'LepCut2l__ele_'+eleWP+'__mu_'+muWP,
@@ -33,6 +36,11 @@ aliases['LepWPSF'] = {
 # gen-matching to prompt only (GenLepMatch2l matches to *any* gen lepton)
 aliases['PromptGenLepMatch2l'] = {
     'expr': 'Alt(Lepton_promptgenmatched, 0, 0) * Alt(Lepton_promptgenmatched, 1, 0)',
+    'samples': mc
+}
+
+aliases['PromptGenLepMatch3l'] = {
+    'expr': 'Alt(Lepton_promptgenmatched, 0, 0) * Alt(Lepton_promptgenmatched, 1, 0) * Alt(Lepton_promptgenmatched, 2, 0)',
     'samples': mc
 }
 
@@ -54,6 +62,20 @@ aliases['multiJet'] = {
 
 aliases['noJetInHorn'] = {
     'expr' : 'Sum(CleanJet_pt > 30 && CleanJet_pt < 50 && abs(CleanJet_eta) > 2.6 && abs(CleanJet_eta) < 3.1) == 0',
+}
+
+aliases['Top_pTrw'] = {
+    'expr': '(topGenPt * antitopGenPt > 0.) * (TMath::Sqrt((0.103*TMath::Exp(-0.0118*topGenPt) - 0.000134*topGenPt + 0.973) * (0.103*TMath::Exp(-0.0118*antitopGenPt) - 0.000134*antitopGenPt + 0.973))) + (topGenPt * antitopGenPt <= 0.)',
+    'samples': ['top']
+}
+
+aliases['gstarLow'] = {
+    'expr': 'Gen_ZGstar_mass > 0 && Gen_ZGstar_mass < 4',
+    'samples': ['WZ', 'VgS', 'Vg']
+}
+aliases['gstarHigh'] = {
+    'expr': 'Gen_ZGstar_mass < 0 || Gen_ZGstar_mass > 4',
+    'samples': ['WZ', 'VgS', 'Vg'],
 }
 
 
