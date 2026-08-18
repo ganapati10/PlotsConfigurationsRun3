@@ -32,8 +32,11 @@ def makeMCDirectory(var=""):
 
 
 mcDirectory   = makeMCDirectory()
+fakeDirectoryMuon = os.path.join(treeBaseDir, dataRecoMuon, dataSteps)
 dataDirectoryMuon = os.path.join(treeBaseDir, dataRecoMuon, dataSteps)
+fakeDirectoryEGamma = os.path.join(treeBaseDir, dataRecoEGamma, dataSteps)
 dataDirectoryEGamma = os.path.join(treeBaseDir, dataRecoEGamma, dataSteps)
+fakeDirectoryMuonEG = os.path.join(treeBaseDir, dataRecoMuonEG, dataSteps)
 dataDirectoryMuonEG = os.path.join(treeBaseDir, dataRecoMuonEG, dataSteps)
 
 samples = {}
@@ -66,6 +69,8 @@ def CombineBaseW(samples, proc, samplelist):
     s = df.Sum("genEventSumw").GetValue()
     newbaseW = str(xs / s)
     weight = newbaseW + "/baseW"
+
+    print("Weight", weight)
 
     for iSample in samplelist:
         addSampleWeight(samples, proc, iSample, weight)
@@ -100,6 +105,12 @@ DataRun = [
 
 
 DataSets = ['MuonEG','Muon0','Muon1','EGamma0','EGamma1']
+# DataSets = ['EGamma0','EGamma1']
+
+# DataTrig = {
+#     'EGamma0' : '(Trigger_sngEl || Trigger_dblEl)',
+#     'EGamma1' : '(Trigger_sngEl || Trigger_dblEl)',
+# }
 
 DataTrig = {
     'MuonEG'  : 'Trigger_ElMu' ,
@@ -124,7 +135,7 @@ mcCommonWeight = 'XSWeight*METFilter_Common*SFweight*PromptGenLepMatch2l'
 #########################################                                                                                                                      
 ############ SIGNAL ##################                                                                                                                    
 #########################################                                                                                                                    
-treeBaseSignalDir = '/eos/user/m/mwulansa/mkShapesRDF_signalPostProcessingMay2026'
+treeBaseSignalDir = '/eos/user/m/mwulansa/hww_signal_whss'
 signalDirectory = "/".join([treeBaseSignalDir, mcProduction, mcSteps])
 
 files = nanoGetSampleFiles(signalDirectory, 'WminusH_WtoLNu_Hto2WtoLNu2Q_M-125')
@@ -154,13 +165,16 @@ files = nanoGetSampleFiles(mcDirectory, 'DYto2E-2Jets_MLL-50') + \
         nanoGetSampleFiles(mcDirectory, 'DYto2Mu-2Jets_MLL-10to50') + \
         nanoGetSampleFiles(mcDirectory, 'DYto2Tau-2Jets_MLL-10to50')
 
+# files = nanoGetSampleFiles(mcDirectory, 'DYto2E-2Jets_MLL-50') + \
+#         nanoGetSampleFiles(mcDirectory, 'DYto2E-2Jets_MLL-10to50')
+
 samples['DY'] = {
     'name': files,
     'weight': mcCommonWeight,
     'FilesPerJob': 50
 }
 
-# top
+# # top
 files = nanoGetSampleFiles(mcDirectory, 'TTTo2L2Nu') + \
         nanoGetSampleFiles(mcDirectory, 'TbarWplusto2L2Nu') + \
         nanoGetSampleFiles(mcDirectory, 'TWminusto2L2Nu') + \
@@ -267,7 +281,6 @@ samples['WgS'] = {
 addSampleWeight(samples, 'WgS', "WGtoLNuG-1J", "(Gen_ZGstar_mass > 0 && Gen_ZGstar_mass <= 4)")
 
 files =  nanoGetSampleFiles(mcDirectory, "WZTo3LNu") 
-        
 
 samples['WZS'] = {
     'name': files,
@@ -309,6 +322,7 @@ samples['qqH_hww'] = {
     'FilesPerJob': 10,
 }
 
+
 # ###########################################
 # ################## DATA ###################
 # ###########################################
@@ -336,3 +350,31 @@ samples['qqH_hww'] = {
 
 #     samples['DATA']['name'].extend(files)
 #     addSampleWeight(samples, 'DATA', datatag, DataTrig[pd])
+
+
+###########################################
+################## FAKE ###################
+###########################################
+
+samples['Fake'] = {
+    'name': [],
+    'weight': 'METFilter_DATA*fakeW',
+    'weights': [],
+    'isData': ['all'],
+    'FilesPerJob': 100
+}
+
+
+for _, sd in DataRun:
+  for pd in DataSets:
+    datatag = pd + '_' + sd
+
+    if datatag.startswith('MuonEG'):
+        files = nanoGetSampleFiles(fakeDirectoryMuonEG, datatag)
+    elif datatag.startswith('Muon'):
+        files = nanoGetSampleFiles(fakeDirectoryMuon, datatag)
+    elif datatag.startswith('EGamma'):
+        files = nanoGetSampleFiles(fakeDirectoryEGamma, datatag)
+
+    samples['Fake']['name'].extend(files)
+    addSampleWeight(samples, 'Fake', datatag, DataTrig[pd])

@@ -2,11 +2,22 @@ import os
 import copy
 import inspect
 
-configurations = os.path.realpath(inspect.getfile(inspect.currentframe())) # this file
-configurations = os.path.dirname(configurations) # 2024
-configurations = os.path.dirname(configurations) # WH_SS
-configurations = os.path.dirname(configurations) # PlotsConfigurationsRun3
-print(configurations)
+# configurations = os.path.realpath(inspect.getfile(inspect.currentframe())) # this file
+# configurations = os.path.dirname(configurations) # 2024
+# configurations = os.path.dirname(configurations) # WH_SS
+# configurations = os.path.dirname(configurations) # PlotsConfigurationsRun3
+# print(configurations)
+
+ROOT.gSystem.Load("libGpad.so")
+ROOT.gSystem.Load("libGraf.so")
+
+configurations = os.path.realpath(inspect.getfile(inspect.currentframe()))
+macros = os.path.dirname(configurations) + '/macros/'
+fakerates = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(configurations)))) + '/utils/data/FakeRate'
+btagmaps = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(configurations)))) + '/utils/data/btag'
+print(macros)
+print(fakerates)
+print(btagmaps)
 
 aliases = {}
 aliases = OrderedDict()
@@ -20,8 +31,12 @@ mc     = [skey for skey in samples if skey not in ('Fake', 'DATA', 'Dyemb', 'DAT
 # muWP  = 'cut_TightID_pfIsoTight_HWW_tthmva_67'
 # # muWP  = 'cut_TightID_POG'
 
-eleWP = 'cutBased_MediumID_tthMVA_HWW'
-muWP  = 'cut_TightID_pfIsoLoose_HWW_tthmva_HWW'
+# eleWP = 'cutBased_MediumID_tthMVA_HWW'
+# muWP  = 'cut_TightID_pfIsoLoose_HWW_tthmva_HWW'
+
+eleWP = 'cutBased_MediumID_tthMVA_Run3'
+muWP  = 'cut_TightID_pfIsoLoose_HWW_tthmva_67'
+
 
 aliases['LepWPCut'] = {
     'expr': 'LepCut2l__ele_'+eleWP+'__mu_'+muWP,
@@ -32,6 +47,15 @@ aliases['LepWPSF'] = {
     'expr': 'LepSF2l__ele_'+eleWP+'__mu_'+muWP,
     'samples': mc
 }
+
+
+aliases['fakeW'] = {
+    'linesToAdd'     : [f'#include "{macros}fake_rate_reader_class.cc"'],
+    'linesToProcess' : [f"ROOT.gInterpreter.ProcessLine('fake_rate_reader fr_reader = fake_rate_reader(\"{eleWP}\", \"{muWP}\", \"nominal\", 2, \"std\", \"{fakerates}\", \"2023_v12_pt\");')"],
+    'expr'           : f'fr_reader(Lepton_pdgId, Lepton_pt, Lepton_eta, Lepton_isTightMuon_{muWP}, Lepton_isTightElectron_{eleWP}, Lepton_muonIdx, CleanJet_pt, nCleanJet)',
+    'samples'        : ['Fake']
+}
+
 
 # gen-matching to prompt only (GenLepMatch2l matches to *any* gen lepton)
 aliases['PromptGenLepMatch2l'] = {
@@ -121,8 +145,6 @@ aliases['bReq'] = {
 # aliases['wwcr'] = {
 #     'expr': 'mth>60 && mtw2>30 && mll>100 && bVeto'
 # }
-
-
 
 # # Overall b tag SF
 # aliases['btagSF'] = {
